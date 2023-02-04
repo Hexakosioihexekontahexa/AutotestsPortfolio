@@ -8,7 +8,7 @@ namespace AutotestPortfolio.PageObjectModel.Pages
     {
         public const string BasePageUrl = "https://profile.onliner.by/";
 
-        public readonly IWebElement ProfileName = Driver.FindStableElement(By.ClassName("profile-header__name"));
+        public readonly IWebElement ProfileName = Driver.FindElement(By.ClassName("profile-header__name"));
         
 
     }

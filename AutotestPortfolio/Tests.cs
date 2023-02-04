@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using System.Threading;
+using AutotestPortfolio.PageObjectModel.Elements;
 using AutotestPortfolio.PageObjectModel.Pages;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -23,7 +25,9 @@ namespace AutotestPortfolio
         public void CheckCopyrightYear()
         {
             Driver.Navigate().GoToUrl(HomePage.BasePageUrl);
-            Assert.That(HomePage.Footer.Copyright.Text.Contains(DateTime.Today.Year.ToString()),
+            //HomePage homePage = new HomePage();
+            Footer footer = new Footer();
+            Assert.That(footer.Copyright.Text.Contains(DateTime.Today.Year.ToString()),
                 "Copyright data is not actual.");
         }
 
@@ -33,12 +37,13 @@ namespace AutotestPortfolio
             Driver.Navigate().GoToUrl(HomePage.BasePageUrl);
             var categoryName = HomePage.Header.CategoriesList.First().GetAttribute("innerText");
             HomePage.OpenCategory(HomePage.Header.CategoriesList.First());
-            Assert.That(CataloguePage.NavigationTitle.Text.Contains(categoryName),
+            CataloguePage cataloguePage = new CataloguePage();
+            Assert.That(cataloguePage.NavigationTitle.Text.Contains(categoryName),
                 "Category name differs from expected.");
         }
 
         [Test]
-        public void ForumPageHasUpToThreeHeaderAds()
+        public void ForumPageHasAdBlockAboveHeader()
         {
             Driver.Navigate().GoToUrl(ForumPage.BasePageUrl);
             ForumPage forumPage = new ForumPage();
@@ -49,34 +54,42 @@ namespace AutotestPortfolio
         public void UserCanDoBaseLogin()
         {
             Driver.Navigate().GoToUrl(HomePage.BasePageUrl);
-            HomePage.Header.LoginForm.LoginField.SendKeys(TestUserData.login);
-            HomePage.Header.LoginForm.PasswordField.SendKeys(TestUserData.password);
-            HomePage.Header.LoginForm.ConfirmationButton.Click();
+            HomePage.Header.BaseLoginButton.Click();
+            LoginForm loginForm = new LoginForm();
+            loginForm.LoginField.SendKeys(TestUserData.login);
+            loginForm.PasswordField.SendKeys(TestUserData.password);
+            loginForm.ConfirmationButton.Click();
+            Thread.Sleep(30000); //needed to solve captcha manually
             Driver.Navigate().GoToUrl(ProfilePage.BasePageUrl);
             ProfilePage profilePage = new ProfilePage();
             Assert.That(profilePage.ProfileName.GetAttribute("innerText").Equals("3619215"), 
                 "User is either not logged or wrong. Possible captcha failure.");
         }
 
-        [Test]
+        [Test] //during test fixing reached request limit, unable to test
         public void LoggedUserIsRedirectedToHomePageUponHardRefresh()
         {
             Driver.Navigate().GoToUrl(HomePage.BasePageUrl);
-            HomePage.Header.LoginForm.LoginField.SendKeys(TestUserData.login);
-            HomePage.Header.LoginForm.PasswordField.SendKeys(TestUserData.password);
-            HomePage.Header.LoginForm.ConfirmationButton.Click();
+            HomePage.Header.BaseLoginButton.Click();
+            LoginForm loginForm = new LoginForm();
+            loginForm.LoginField.SendKeys(TestUserData.login);
+            loginForm.PasswordField.SendKeys(TestUserData.password);
+            loginForm.ConfirmationButton.Click();
+            Thread.Sleep(30000); //needed to solve captcha manually
             Driver.Navigate().GoToUrl(ProfilePage.BasePageUrl);
             ProfilePage.HardRefresh();
             Assert.That(Driver.Url.Equals(HomePage.BasePageUrl), "User was not redirected to Home page.");
         }
 
         [Test]
-        public void UserCanDoSearch()
+        public void UserCanDoSearch() //iframe
         {
             Driver.Navigate().GoToUrl(HomePage.BasePageUrl);
+            HomePage.DoSearch("Karcher");
+            Thread.Sleep(5000);
             HomePage homePage = new HomePage();
-            var result = homePage.DoSearch("Karcher");
-            homePage.ClickFirstItem(result);
+            var result = homePage.SearchResults;
+            homePage.ClickFirstItem(homePage.SearchResults);
             Assert.That(
                 CataloguePage.ProductItem.GetAttribute("innerText").Equals("Пылесос Karcher WD 3 V 1.628-101.0"),
                 "Either search was not successful, or wrong product page is loaded.");

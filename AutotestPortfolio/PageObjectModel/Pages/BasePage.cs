@@ -10,7 +10,7 @@ namespace AutotestPortfolio.PageObjectModel.Pages
     {
         private const string HomePageUrl = "https://www.onliner.by";
 
-        private IList<IWebElement> SearchResults { get; } = Driver.FindElements(By.ClassName("search__result"));
+        public readonly IList<IWebElement> SearchResults = Driver.FindElements(By.XPath("//*[@id=\"search-page\"]//li"));
 
         public static Header Header = new Header();
         public static Footer Footer = new Footer();
@@ -36,10 +36,10 @@ namespace AutotestPortfolio.PageObjectModel.Pages
             category.Click();
         }
         
-        public IList<IWebElement> DoSearch(string searchQuery)
+        public static void DoSearch(string searchQuery)
         {
+            //Header header = new Header();
             Header.SearchBox.SendKeys(searchQuery);
-            return SearchResults;
         }
 
         public static void DoBaseLogin((string, string) userData)
@@ -51,7 +51,7 @@ namespace AutotestPortfolio.PageObjectModel.Pages
 
         public void ClickFirstItem(IList<IWebElement> list)
         {
-            SearchResults.FirstOrDefault().Click();
+            list.FirstOrDefault().Click();
         }
 
         public void ClickDefinedItem(IList<IWebElement> list, int index)

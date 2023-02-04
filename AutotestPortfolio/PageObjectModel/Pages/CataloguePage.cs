@@ -12,7 +12,7 @@ namespace AutotestPortfolio.PageObjectModel.Pages
         public const string BasePageUrl = "https://catalog.onliner.by/";
         public IList<IWebElement> CatalogueResults { get; } = Driver.FindElements(By.ClassName("schema-product__group"));
 
-        public static readonly IWebElement NavigationTitle = Wait.Until(e =>
+        public readonly IWebElement NavigationTitle = Wait.Until(e =>
             Driver.FindElements(By.ClassName("catalog-navigation__title")).FirstOrDefault());
 
         public static readonly IWebElement ProductItem = Driver.FindStableElement(By.ClassName("catalog-masthead__title"));

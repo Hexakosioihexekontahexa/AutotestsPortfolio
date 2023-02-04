@@ -22,9 +22,9 @@ namespace AutotestPortfolio.PageObjectModel.Elements
 
         public readonly IWebElement SiteLogo = Driver.FindElement(By.ClassName("onliner_logo"));
 
-        public readonly IWebElement SearchBox = Driver.FindElement(By.ClassName("fast-search"));
+        public readonly IWebElement SearchBox = Driver.FindElement(By.ClassName("fast-search__input"));
 
-        public readonly IWebElement LoginBox = Driver.FindElement(By.ClassName("auth-bar__item--text"));
+        public readonly IWebElement BaseLoginButton = Driver.FindElement(By.ClassName("auth-bar__item--text"));
         //there are other login methods being omitted
 
         public static readonly IWebElement Cart = Driver.FindElement(By.ClassName("auth-bar__item--cart"));
